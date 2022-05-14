@@ -1,3 +1,4 @@
+SetWorkingDir %A_ScriptDir%
 command:=0
 
 If(A_Args[1] == "ChangeActiveAppVolume")
