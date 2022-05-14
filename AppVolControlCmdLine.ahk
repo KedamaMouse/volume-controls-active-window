@@ -14,6 +14,8 @@ Else If(A_Args[1] == "SetActiveAppVolume")
 }
 Else
 {
+	;scuff because writing to standard out doesn't work. 
+	;supposedly ways around it but they weren't working and i don't want to look into it more now.
 	MsgBox , 
 	(
 	Options:
