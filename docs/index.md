@@ -4,7 +4,7 @@ This is a set of scripts for adjusting volume on whatever the active application
 
 I created this to simplify making on the fly audio adjustments for my partner's streams (shameless plug, check him out on twitch at [AogumaBear](https://www.twitch.tv/AogumaBear))
 
-By defautl it also shows an overlay giving you the adjusted volume:
+It also shows an overlay giving you the adjusted volume:
 
 ![image](https://user-images.githubusercontent.com/2153956/168446531-d917b132-2933-40ba-a532-15a3b7ff8b3d.png)
 
@@ -59,14 +59,32 @@ Sets the active window's volume to the given volume
 
 ### StreamDeck using Streamdeck command line plugin
 The plugin will give you a new option under "custom" for command line.
-```markdown
-```
+Just specify the command you want from the above section and you're good to go!
 
 ### StreamDeck without plugin
-For each button you want, make a .bat file containing the appropriate command line command. 
+For each button you want, you need to make a .bat file containing the appropriate command line command, and do this for each button you want.
+then you'd use a System: Open button in Streamdeck and launch the .bat file
 
 ### Using keyboard shortcuts
-
+If you want to use keyboard shortcuts for this instead, you can use Autohotkey's built in [hotkey syntax](https://www.autohotkey.com/docs/Hotkeys.htm) to specify shortcuts. hotkeyExample.ahk shows an example with the Function keys. If using a hotkey script, it needs to be started for the hotkeys to work. 
 
 ## Advanced tweaks
+For more advanced tweaks of behavior you have to edit AppVolumeControls.ahk
+There's a couple of variables at the top of the file controlling aspects of the overlay: how long it displays, color, transparency. Those should be very simple to edit.
+For other changes to the overlay, such as it's position, this is all in the ShowAppVolume function.
 
+If you like the idea of the relative volume change option, but want it to work slightly differently, you can tweak this if block in ChangeActiveAppVolumeRelative
+```markdown
+If (adjustedVol > 50)
+{
+  change:=10
+}
+Else If(adjustedVol > 10)
+{
+  change:=5
+}
+Else
+{
+  change:=1
+}
+```
