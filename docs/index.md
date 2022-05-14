@@ -1,7 +1,8 @@
+# Active Window Volume Controls
 ## Overview
 This is a set of scripts for adjusting volume on whatever the active application in windows is.
 
-I created this to simplify making on the fly audio adjustments for my partner's streams (shameless plug, check him out at https://www.twitch.tv/AogumaBear)
+I created this to simplify making on the fly audio adjustments for my partner's streams (shameless plug, check him out on twitch at [AogumaBear](https://www.twitch.tv/AogumaBear))
 
 **Why not just adjust overall desktop volume in windows, or in OBS?**
 - In most cases, this is adjusting the volume of things you don't really want to change, like the relative volume of alerts to your voice. You'll also have to adjust volume less overall, one loud APP won't mean having to adjust everything again later.
