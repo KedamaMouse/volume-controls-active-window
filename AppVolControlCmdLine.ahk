@@ -1,22 +1,31 @@
 command:=0
 
-If(%1% = ChangeActiveAppVolume)
+If(A_Args[1] == "ChangeActiveAppVolume")
 {
 	command:=1
 }
-Else If(%1% = ChangeActiveAppVolumeRelative)
+Else If(A_Args[1] == "ChangeActiveAppVolumeRelative")
 {
 	command:=2
 }
-Else If(%1% = SetActiveAppVolume)
+Else If(A_Args[1] == "SetActiveAppVolume")
 {
 	command:=3
 }
 Else
 {
+	MsgBox , 
+	(
+	Options:
+	ChangeActiveAppVolume [changePercent] : adjust the active window's volume by changePercent
+	
+	ChangeActiveAppVolumeRelative [Direction] : adjust the active window's volume by a variable percent. Direction should be 1 to increase and -1 to decrease
+	
+	SetActiveAppVolume [newVolume]: set the active window's volume to newVolume
+	
+	)
 	
 }
-
 SetTitleMatchMode 2
 DetectHiddenWindows On
 if (!WinExist("AppVolumeControls.ahk ahk_class AutoHotkey"))
@@ -27,6 +36,6 @@ if (!WinExist("AppVolumeControls.ahk ahk_class AutoHotkey"))
 
 if (WinExist("AppVolumeControls.ahk ahk_class AutoHotkey"))
 {
-    PostMessage, 0x5555, %command%, %2%  ; The message is sent  to the "last found window" due to WinExist() above.
+    PostMessage, 0x5555, %command%, A_Args[2]  ; The message is sent  to the "last found window" due to WinExist() above.
 }
 DetectHiddenWindows Off 
