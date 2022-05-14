@@ -1,5 +1,6 @@
-;adjust this to change how long in milliseconds the overlay displays.
-global msForOverlay:=3000
+global msForOverlay:=3000 ;ahow long in milliseconds the overlay displays.
+global guiBackgroundColor:="228C22" ;hex code for popup background
+global guiTransparency:=255 ;adjust to make the window semi-transparent. this takes a value between 0 and 255, 150 is a good semi-transparent value.
 
 ;following the example here: 
 ;https://www.autohotkey.com/docs/commands/OnMessage.htm#ExCustom
@@ -96,9 +97,8 @@ ShowAppVolume(processName)
 	
 	Gui, VolumeIndicator:New
 	Gui, -Caption +AlwaysOnTop +LastFound +ToolWindow
-	Gui, Color, 228C22
-	;uncommment the line below to make the window semi-transparent. this takes a value between 0 and 255
-	;WinSet, Transparent, 150
+	Gui, Color, %guiBackgroundColor%
+	WinSet, Transparent, %guiTransparency%
 	Gui, Font, s16 cWhite
 	Gui, Add, Text,, %processName% %volume%
 	Gui, Add, Progress, w416, %volume%
