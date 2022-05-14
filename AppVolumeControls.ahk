@@ -1,19 +1,29 @@
 ;adjust this to change how long in milliseconds the overlay displays.
 global msForOverlay:=3000
 
-; example
-F1::
-ChangeActiveAppVolumeRelative(-1)
-Exit
-F2::
-ChangeActiveAppVolumeRelative(1)
-Exit
-F3::
-SetActiveAppVolume(25)
-Exit
-F4::
-SetActiveAppVolume(75)
-Exit
+;following the example here: 
+;https://www.autohotkey.com/docs/commands/OnMessage.htm#ExCustom
+;using windows messages lets us avoid hotkeys while keeping this script persistent so it only creates one Gui.
+;a second script can take command line arguments to send commands to this script.
+OnMessage(0x5555, "MsgMonitor")
+
+MsgMonitor(wParam, lParam, msg)
+{
+	If(wParam = 1)
+	{
+		ChangeActiveAppVolume(lParam)		
+	}
+	Else If(wParam = 2)
+	{
+		ChangeActiveAppVolumeRelative(lParam)
+	} 
+	Else If(wParam = 3)
+	{
+		SetActiveAppVolume(lParam)
+	}
+}
+
+;
 
 ChangeActiveAppVolume(change)
 {
@@ -78,7 +88,7 @@ ShowAppVolume(processName)
 	;global guiObject
 	volume:= GetAppPercentVolume(processName)
 
-	uncomment to position based on obs. 
+	;uncomment to position based on obs. 
 	;WinGetPos, X, Y, , ,  ahk_exe obs64.exe
 	
 	X:= (X ? X : 0)+20
