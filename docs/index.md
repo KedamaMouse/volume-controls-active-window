@@ -1,37 +1,24 @@
-## Welcome to GitHub Pages
+## Overview
+This is a set of scripts for adjusting volume on whatever the active application in windows is.
 
-You can use the [editor on GitHub](https://github.com/KedamaMouse/volume-controls-active-window/edit/trunk/docs/index.md) to maintain and preview the content for your website in Markdown files.
+I created this to simplify making on the fly audio adjustments for my partner's streams (shameless plug, check him out at https://www.twitch.tv/AogumaBear)
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+**Why not just adjust overall desktop volume in windows, or in OBS?**
+- In most cases, this is adjusting the volume of things you don't really want to change, like the relative volume of alerts to your voice. You'll also have to adjust volume less overall, one loud APP won't mean having to adjust everything again later.
+- The volume OBS captures is actually independent of windonw's master volume, so adjusting that doesn't affect stream at all.
 
-### Markdown
+## Dependencies
+First you need to download a couple of dependencies:
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+- [Autohotkey](https://www.autohotkey.com/)
+  - This is written using AutoHotkey, which describes itself as "The ultimate automation scripting language for Windows." This simplifies things like getting the active application, getting window positions and showing a basic GUI. It also provides a script that (hopefully) less tech savy folks will feel comfortable adjusting to suit their needs.
+- NirSoft's [SoundVolumeCommandLine tool](https://www.nirsoft.net/utils/sound_volume_command_line.html)
+  - This is what lets us actually adjust volume for a specific application, and retreive the volume.
+  - This needs to be either in the same folder as the autohotkey scripts, or in one of the places windows looks for command line tools, such as C:\Windows. These locations are defined by the PATH variable.
+- If you're using a streamdeck, Mike Powell's [stream deck command line plugin](https://github.com/mikepowell/streamdeck-commandline/releases/tag/v1.0) makes this simpler to set up. The streamdeck doesn't support passing in command line arguments natively, so without this you'd need to make a script for each button.
+
+## Setup/Usage
 
 ```markdown
-Syntax highlighted code block
 
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
 ```
-
-For more details see [Basic writing and formatting syntax](https://docs.github.com/en/github/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/KedamaMouse/volume-controls-active-window/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
