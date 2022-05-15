@@ -70,6 +70,9 @@ If you want to use keyboard shortcuts for this instead, you can use Autohotkey's
 
 ## Advanced tweaks
 For more advanced tweaks of behavior you have to edit AppVolumeControls.ahk
+
+**After any edits, you need to Exit the script if it's running. do this by right clicking on the AutoHotkey icon in the system tray and choosing Exit**
+
 There's a couple of variables at the top of the file controlling aspects of the overlay: how long it displays, color, transparency. Those should be very simple to edit.
 For other changes to the overlay, such as it's position, this is all in the ShowAppVolume function.
 
