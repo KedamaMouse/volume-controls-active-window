@@ -26,11 +26,17 @@ MsgMonitor(wParam, lParam, msg)
 
 ;
 
-ChangeActiveAppVolume(change)
+ChangeActiveAppVolume(change, startingVolume:="")
 {
 	WinGet, process_name, ProcessName, A
+	
+	If(startingVolume="")
+	{
+		startingVolume:=GetAppPercentVolume(process_name)
+	}
+	
 	RunWait svcl.exe /ChangeVolume "%process_name%" %change%,, hide
-	ShowAppVolume(process_name)
+	ShowAppVolume(process_name,(startingVolume + change > 0))
 }
 
 ;Adjust volume relative to its current value
@@ -64,7 +70,7 @@ ChangeActiveAppVolumeRelative(dir)
 	{
 		change:=-change
 	}
-	ChangeActiveAppVolume(change)
+	ChangeActiveAppVolume(change, volume)
 }
 
 
@@ -72,7 +78,7 @@ SetActiveAppVolume(newVal)
 {
 	WinGet, process_name, ProcessName, A
 	RunWait svcl.exe /SetVolume "%process_name%" %newVal%,, hide
-	ShowAppVolume(process_name)
+	ShowAppVolume(process_name, ((newVal > 0) ? true : false) )
 }
 
 GetAppPercentVolume(processName)
@@ -83,11 +89,21 @@ GetAppPercentVolume(processName)
 	return vol
 }
 
-ShowAppVolume(processName)
+ShowAppVolume(processName, notExpectingZero:=false)
 {
 
 	;global guiObject
 	volume:= GetAppPercentVolume(processName)
+	
+	msg:=""
+	If(notExpectingZero & (volume = 0))
+	{
+		msg = Volume for %processName% not found.
+	}
+	Else
+	{
+		msg = %processName% %volume%
+	}
 
 	;uncomment to position based on obs. 
 	;WinGetPos, X, Y, , ,  ahk_exe obs64.exe
@@ -100,7 +116,7 @@ ShowAppVolume(processName)
 	Gui, Color, %guiBackgroundColor%
 	WinSet, Transparent, %guiTransparency%
 	Gui, Font, s16 cWhite
-	Gui, Add, Text,, %processName% %volume%
+	Gui, Add, Text,, %msg%
 	Gui, Add, Progress, w416, %volume%
 	Gui, Show, x%X% y%Y% NoActivate , ShowAppVolumePopup
 	SetTimer, RemoveOverlay, %msForOverlay%
