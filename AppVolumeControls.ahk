@@ -1,5 +1,7 @@
 global msForOverlay:=3000 ;ahow long in milliseconds the overlay displays.
 global guiBackgroundColor:="228C22" ;hex code for popup background
+global textColor:="FFFFFF"  ;hex code for text color
+global progressColor:="0000AF"
 global guiTransparency:=255 ;adjust to make the window semi-transparent. this takes a value between 0 and 255, 150 is a good semi-transparent value.
 
 ;following the example here: 
@@ -115,9 +117,9 @@ ShowAppVolume(processName, notExpectingZero:=false)
 	Gui, -Caption +AlwaysOnTop +LastFound +ToolWindow
 	Gui, Color, %guiBackgroundColor%
 	WinSet, Transparent, %guiTransparency%
-	Gui, Font, s16 cWhite
+	Gui, Font, s16 c%textColor%
 	Gui, Add, Text,, %msg%
-	Gui, Add, Progress, w416, %volume%
+	Gui, Add, Progress, w416 c%progressColor%, %volume%
 	Gui, Show, x%X% y%Y% NoActivate , ShowAppVolumePopup
 	SetTimer, RemoveOverlay, %msForOverlay%
 }
