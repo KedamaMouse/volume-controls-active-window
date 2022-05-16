@@ -1,9 +1,3 @@
-global msForOverlay:=3000 ;ahow long in milliseconds the overlay displays.
-global guiBackgroundColor:="228C22" ;hex code for popup background
-global textColor:="FFFFFF"  ;hex code for text color
-global progressColor:="0000AF"
-global guiTransparency:=255 ;adjust to make the window semi-transparent. this takes a value between 0 and 255, 150 is a good semi-transparent value.
-
 ;following the example here: 
 ;https://www.autohotkey.com/docs/commands/OnMessage.htm#ExCustom
 ;using windows messages lets us avoid hotkeys while keeping this script persistent so it only creates one Gui.
@@ -94,6 +88,14 @@ GetAppPercentVolume(processName)
 ShowAppVolume(processName, notExpectingZero:=false)
 {
 
+	msForOverlay:=AddIniSetting("Overlay","msForOverlay",3000) ;how long in milliseconds the overlay displays.
+	guiBackgroundColor:=AddIniSetting("Overlay","popupBackgroundColor","228C22")
+	textColor:=AddIniSetting("Overlay","textColor","FFFFFF")
+	progressColor:=AddIniSetting("Overlay","ProgressBarColor","0000AF")
+	guiTransparency:=AddIniSetting("Overlay","popupTransparency",255) ;This takes a value between 0 and 255, 150 is a good semi-transparent value.
+	width:=AddIniSetting("Overlay","progressBarWidth",400)
+
+
 	;global guiObject
 	volume:= GetAppPercentVolume(processName)
 	
@@ -108,10 +110,13 @@ ShowAppVolume(processName, notExpectingZero:=false)
 	}
 
 	;uncomment to position based on obs. 
-	;WinGetPos, X, Y, , ,  ahk_exe obs64.exe
+	windowToPositionFrom:=AddIniSetting("Overlay","windowToPositionFrom",false)
+	If(windowToPositionFrom){
+		WinGetPos, X, Y, , ,  ahk_exe %windowToPositionFrom%
+	}
 	
-	X:= (X ? X : 0)+20
-	Y:= (Y ? Y : 0)+50
+	X:= (X ? X : 0)+AddIniSetting("Overlay","xCoordOffset",20)
+	Y:= (Y ? Y : 0)+AddIniSetting("Overlay","yCoordOffset",50)
 	
 	Gui, VolumeIndicator:New
 	Gui, -Caption +AlwaysOnTop +LastFound +ToolWindow
@@ -119,7 +124,7 @@ ShowAppVolume(processName, notExpectingZero:=false)
 	WinSet, Transparent, %guiTransparency%
 	Gui, Font, s16 c%textColor%
 	Gui, Add, Text,, %msg%
-	Gui, Add, Progress, w416 c%progressColor%, %volume%
+	Gui, Add, Progress, w%width% c%progressColor%, %volume%
 	Gui, Show, x%X% y%Y% NoActivate , ShowAppVolumePopup
 	SetTimer, RemoveOverlay, %msForOverlay%
 }
@@ -127,3 +132,11 @@ ShowAppVolume(processName, notExpectingZero:=false)
 
 RemoveOverlay:
     Gui VolumeIndicator:Destroy
+	
+AddIniSetting(SectionName,Key,Default)
+{
+	
+	IniRead, value, config.ini, %SectionName%, %Key%, %default%
+	IniWrite, %value%, config.ini, %SectionName%, %Key%
+	return %value%
+}
