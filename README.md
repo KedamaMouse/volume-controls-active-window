@@ -68,15 +68,31 @@ then you'd use a System: Open button in Streamdeck and launch the .bat file
 ### Using keyboard shortcuts
 If you want to use keyboard shortcuts for this instead, you can use Autohotkey's built in [hotkey syntax](https://www.autohotkey.com/docs/Hotkeys.htm) to specify shortcuts. hotkeyExample.ahk shows an example with the Function keys. If using a hotkey script, it needs to be started for the hotkeys to work. 
 
+## Customizing
+The first time it runs, AppVolumeControls.ahk will create a config.ini file in the same folder. This has some simple options you can change, and should look something like this: 
+```markdown
+[Overlay]
+msForOverlay=3000
+popupBackgroundColor=228C22
+textColor=FFFFFF
+ProgressBarColor=0000AF
+popupTransparency=255
+progressBarWidth=400
+windowToPositionFrom=0
+xCoordOffset=20
+yCoordOffset=50
+```
+Most of these should be self-explanatory. The one weird one is windowToPositionFrom. You can specify a window to show this on instead of just an offset from the top left of the screen by giving the process exe name. For example to possition the popup on top of obs you would change it to:
+```markdown
+windowToPositionFrom=obs64.exe
+```
+
 ## Advanced tweaks
 For more advanced tweaks of behavior you have to edit AppVolumeControls.ahk
 
 **After any edits, you need to Exit the script if it's running. do this by right clicking on the AutoHotkey icon in the system tray and choosing Exit**
 
-There's a couple of variables at the top of the file controlling aspects of the overlay: how long it displays, color, transparency. Those should be very simple to edit.
-For other changes to the overlay, such as it's position, this is all in the ShowAppVolume function.
-
-If you like the idea of the relative volume change option, but want it to work slightly differently, you can tweak this if block in ChangeActiveAppVolumeRelative
+For example if you like the idea of the relative volume change option, but want it to work slightly differently, you can tweak this if block in ChangeActiveAppVolumeRelative
 ```markdown
 If (adjustedVol > 50)
 {
