@@ -2,7 +2,7 @@
 ;https://www.autohotkey.com/docs/commands/OnMessage.htm#ExCustom
 ;using windows messages lets us avoid hotkeys while keeping this script persistent so it only creates one Gui.
 ;a second script can take command line arguments to send commands to this script.
-OnMessage(0x5555, "MsgMonitor")
+OnMessage(0x5555, "MsgMonitor",10)
 
 MsgMonitor(wParam, lParam, msg)
 {
@@ -87,7 +87,6 @@ GetAppPercentVolume(processName)
 
 ShowAppVolume(processName, notExpectingZero:=false)
 {
-
 	msForOverlay:=AddIniSetting("Overlay","msForOverlay",3000,"how long in milliseconds the overlay displays")
 	guiBackgroundColor:=AddIniSetting("Overlay","popupBackgroundColor","228C22","hex code for background color")
 	textColor:=AddIniSetting("Overlay","textColor","FFFFFF", "hex code for text color")
