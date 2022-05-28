@@ -2,7 +2,7 @@
 ;https://www.autohotkey.com/docs/commands/OnMessage.htm#ExCustom
 ;using windows messages lets us avoid hotkeys while keeping this script persistent so it only creates one Gui.
 ;a second script can take command line arguments to send commands to this script.
-OnMessage(0x5555, "MsgMonitor",10)
+OnMessage(0x5555, "MsgMonitor",20)
 
 MsgMonitor(wParam, lParam, msg)
 {
