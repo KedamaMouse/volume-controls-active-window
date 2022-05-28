@@ -88,12 +88,12 @@ GetAppPercentVolume(processName)
 ShowAppVolume(processName, notExpectingZero:=false)
 {
 
-	msForOverlay:=AddIniSetting("Overlay","msForOverlay",3000) ;how long in milliseconds the overlay displays.
-	guiBackgroundColor:=AddIniSetting("Overlay","popupBackgroundColor","228C22")
-	textColor:=AddIniSetting("Overlay","textColor","FFFFFF")
-	progressColor:=AddIniSetting("Overlay","ProgressBarColor","0000AF")
-	guiTransparency:=AddIniSetting("Overlay","popupTransparency",255) ;This takes a value between 0 and 255, 150 is a good semi-transparent value.
-	width:=AddIniSetting("Overlay","progressBarWidth",400)
+	msForOverlay:=AddIniSetting("Overlay","msForOverlay",3000,"how long in milliseconds the overlay displays")
+	guiBackgroundColor:=AddIniSetting("Overlay","popupBackgroundColor","228C22","hex code for background color")
+	textColor:=AddIniSetting("Overlay","textColor","FFFFFF", "hex code for text color")
+	progressColor:=AddIniSetting("Overlay","ProgressBarColor","0000AF","hex code for progress bar color")
+	guiTransparency:=AddIniSetting("Overlay","popupTransparency",255,"This takes a value between 0 and 255, 150 is a good semi-transparent value.") 
+	width:=AddIniSetting("Overlay","progressBarWidth",400,"width of the progress bar in pixels")
 
 
 	;global guiObject
@@ -109,17 +109,21 @@ ShowAppVolume(processName, notExpectingZero:=false)
 		msg = %processName% %volume%
 	}
 
-	;uncomment to position based on obs. 
-	windowToPositionFrom:=AddIniSetting("Overlay","windowToPositionFrom",false)
+	
+	windowToPositionFrom:=AddIniSetting("Overlay","windowToPositionFrom",false,"specify an exe name to show over a specific window, eg. obs64.exe")
 	If(windowToPositionFrom){
 		WinGetPos, X, Y, , ,  ahk_exe %windowToPositionFrom%
 	}
 	
-	X:= (X ? X : 0)+AddIniSetting("Overlay","xCoordOffset",20)
-	Y:= (Y ? Y : 0)+AddIniSetting("Overlay","yCoordOffset",50)
+	X:= (X ? X : 0)+AddIniSetting("Overlay","xCoordOffset",20,"x offset for where to show this, from the topleft of the target window.")
+	Y:= (Y ? Y : 0)+AddIniSetting("Overlay","yCoordOffset",50,"y offset for where to show this, from the topleft of the target window.")
 	
+	alwaysOnTop:=AddIniSetting("Overlay","alwaysOnTop",True,"If the overlay shows on top of other windows. For capturing in obs you may want this off")
+	hideFromTaskbar:=AddIniSetting("Overlay","hideFromTaskbar", True,"If the overlay is hidden from the taskbar. needs to be off if you want to capture it in obs.")
+	alwaysOnTop:= (alwaysOnTop ? "+AlwaysOnTop" : "")
+	hideFromTaskbar:= (hideFromTaskbar ? "+ToolWindow" : "")
 	Gui, VolumeIndicator:New
-	Gui, -Caption +AlwaysOnTop +LastFound +ToolWindow
+	Gui, -Caption  %alwaysOnTop% +LastFound %hideFromTaskbar%
 	Gui, Color, %guiBackgroundColor%
 	WinSet, Transparent, %guiTransparency%
 	Gui, Font, s16 c%textColor%
@@ -133,10 +137,16 @@ ShowAppVolume(processName, notExpectingZero:=false)
 RemoveOverlay:
     Gui VolumeIndicator:Destroy
 	
-AddIniSetting(SectionName,Key,Default)
+AddIniSetting(SectionName,Key,Default, comment:="")
 {
 	
-	IniRead, value, config.ini, %SectionName%, %Key%, %default%
-	IniWrite, %value%, config.ini, %SectionName%, %Key%
+	IniRead, valueAndComment, config.ini, %SectionName%, %Key%, %default%|
+	valueArray:= StrSplit(valueAndComment,"|")
+	value:=valueArray[1]
+	If(value = "")
+	{
+		value:= Default
+	}
+	IniWrite, %value%|%comment%, config.ini, %SectionName%, %Key%
 	return %value%
 }
