@@ -72,20 +72,24 @@ If you want to use keyboard shortcuts for this instead, you can use Autohotkey's
 The first time it runs, AppVolumeControls.ahk will create a config.ini file in the same folder. This has some simple options you can change, and should look something like this: 
 ```markdown
 [Overlay]
-msForOverlay=3000
-popupBackgroundColor=228C22
-textColor=FFFFFF
-ProgressBarColor=0000AF
-popupTransparency=255
-progressBarWidth=400
-windowToPositionFrom=0
-xCoordOffset=20
-yCoordOffset=50
+msForOverlay=3000|how long in milliseconds the overlay displays
+popupBackgroundColor=228C22|hex code for background color
+textColor=FFFFFF|hex code for text color
+ProgressBarColor=0000AF|hex code for progress bar color
+popupTransparency=255|This takes a value between 0 and 255, 150 is a good semi-transparent value.
+progressBarWidth=400|width of the progress bar in pixels
+windowToPositionFrom=0|specify an exe name to show over a specific window, eg. obs64.exe
+xCoordOffset=20|x offset for where to show this, from the topleft of the target window.
+yCoordOffset=50|y offset for where to show this, from the topleft of the target window.
+alwaysOnTop=1|If the overlay shows on top of other windows. For capturing in obs you may want this off
+hideFromTaskbar=1|If the overlay is hidden from the taskbar. needs to be off if you want to capture it in obs.
 ```
-Most of these should be self-explanatory. The one weird one is windowToPositionFrom. You can specify a window to show this on instead of just an offset from the top left of the screen by giving the process exe name. For example to possition the popup on top of obs you would change it to:
+For each of these, everthing after the | is just a comment. Most of these should be self-explanatory. The one weird one is windowToPositionFrom. You can specify a window to show this on instead of just an offset from the top left of the screen by giving the process exe name. For example to possition the popup on top of obs you would change it to:
 ```markdown
 windowToPositionFrom=obs64.exe
 ```
+
+Showing this overlay on top of the active window doesn't play well with true fullscreen applications, So i recommend either just showing it on top of obs with the windowToPositionFrom option above, or setting alwaysOnTop and hideFromTaskbar to 0, and then capturing the window in obs. It depends on if you want the volume slider to show on the stream or not.
 
 ## Advanced tweaks
 For more advanced tweaks of behavior you have to edit AppVolumeControls.ahk
