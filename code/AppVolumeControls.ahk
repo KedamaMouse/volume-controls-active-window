@@ -85,6 +85,10 @@ GetAppPercentVolume(processName)
 	return vol
 }
 
+global OverlayLabel
+global OverlayProgress
+global OverlayShowing:=false
+
 ShowAppVolume(processName, notExpectingZero:=false)
 {
 	msForOverlay:=AddIniSetting("Overlay","msForOverlay",3000,"how long in milliseconds the overlay displays")
@@ -94,8 +98,6 @@ ShowAppVolume(processName, notExpectingZero:=false)
 	guiTransparency:=AddIniSetting("Overlay","popupTransparency",255,"This takes a value between 0 and 255, 150 is a good semi-transparent value.") 
 	width:=AddIniSetting("Overlay","progressBarWidth",400,"width of the progress bar in pixels")
 
-
-	;global guiObject
 	volume:= GetAppPercentVolume(processName)
 	
 	msg:=""
@@ -121,21 +123,37 @@ ShowAppVolume(processName, notExpectingZero:=false)
 	hideFromTaskbar:=AddIniSetting("Overlay","hideFromTaskbar", True,"If the overlay is hidden from the taskbar. needs to be off if you want to capture it in obs.")
 	alwaysOnTop:= (alwaysOnTop ? "+AlwaysOnTop" : "")
 	hideFromTaskbar:= (hideFromTaskbar ? "+ToolWindow" : "")
-	Gui, VolumeIndicator:New
-	Gui, -Caption  %alwaysOnTop% +LastFound %hideFromTaskbar%
-	Gui, Color, %guiBackgroundColor%
-	WinSet, Transparent, %guiTransparency%
-	Gui, Font, s16 c%textColor%
-	Gui, Add, Text,, %msg%
-	Gui, Add, Progress, w%width% c%progressColor%, %volume%
-	Gui, Show, x%X% y%Y% NoActivate , ShowAppVolumePopup
+
+	If(OverlayShowing)
+	{
+		GuiControl, VolumeIndicator:Text, OverlayLabel, %msg%
+		GuiControl, VolumeIndicator: , OverlayProgress, %volume%
+		
+	}
+	Else
+	{
+		OverlayShowing:=true
+		Gui, VolumeIndicator:New
+		Gui, -Caption  %alwaysOnTop% +LastFound %hideFromTaskbar%
+		Gui, Color, %guiBackgroundColor%
+		WinSet, Transparent, %guiTransparency%
+		Gui, Font, s16 c%textColor%
+		Gui, Add, Text, vOverlayLabel, %msg%
+		Gui, Add, Progress, vOverlayProgress w%width% c%progressColor%, %volume%
+		Gui, Show, x%X% y%Y% NoActivate , ShowAppVolumePopup
+	}
 	SetTimer, RemoveOverlay, %msForOverlay%
 }
 
 
-RemoveOverlay:
+RemoveOverlay()
+{
+	OverlayShowing:=false
+	SetTimer, RemoveOverlay, Off
+	OverlayLabel:=false
     Gui VolumeIndicator:Destroy
 	
+}
 AddIniSetting(SectionName,Key,Default, comment:="")
 {
 	
