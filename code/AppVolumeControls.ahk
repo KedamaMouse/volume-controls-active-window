@@ -1,7 +1,3 @@
-;I would like to avoid globals, that's why i made this a class. but it's finiky in ahk.
-global OverlayLabel
-global OverlayProgress
-
 new AppVolumeControls
 
 Class AppVolumeControls
@@ -111,7 +107,7 @@ Class AppVolumeControls
 
 	ProcessInCache(processName)
 	{		
-		return ((processName = cachedVolume["process"]) && (cachedVolume["value"] > 0))
+		return ((processName = this.cachedVolume["process"]) && (this.cachedVolume["value"] > 0))
 	}
 
 	GetAppPercentVolume(processName)
@@ -119,19 +115,22 @@ Class AppVolumeControls
 		
 		If(this.ProcessInCache(processName))
 		{
-			return cachedVolume["value"]
+			return this.cachedVolume["value"]
 		}
 		
 		RunWait svcl.exe /GetPercent %processName%,, hide
 		vol:= errorlevel // 10
-		cachedVolume["process"]:=processName 
-		cachedVolume["value"]:=vol
+		this.cachedVolume["process"]:=processName 
+		this.cachedVolume["value"]:=vol
 		
 		return vol
 	}
 	
 	ShowAppVolume(processName, notExpectingZero:=false)
 	{
+	
+		static OverlayLabel
+		static OverlayProgress
 		msForOverlay:=this.AddIniSetting("Overlay","msForOverlay",3000,"how long in milliseconds the overlay displays")
 		guiBackgroundColor:=this.AddIniSetting("Overlay","popupBackgroundColor","228C22","hex code for background color")
 		textColor:=this.AddIniSetting("Overlay","textColor","FFFFFF", "hex code for text color")
@@ -144,7 +143,7 @@ Class AppVolumeControls
 		If(notExpectingZero & (volume = 0))
 		{
 			msg = Volume for %processName% not found.
-			cachedVolume:={}
+			this.cachedVolume:={}
 			
 		}
 		Else
@@ -168,9 +167,9 @@ Class AppVolumeControls
 		
 		If(this.OverlayShowing)
 		{
-			this.Debug("update existing overlay")
 			GuiControl, VolumeIndicator:Text, OverlayLabel, %msg%
 			GuiControl, VolumeIndicator: , OverlayProgress, %volume%
+			
 			
 		}
 		Else
@@ -203,7 +202,7 @@ Class AppVolumeControls
 		this.OverlayShowing:=false
 		removeFunction:=this.removeFunction
 		SetTimer, %removeFunction%, Off
-		cachedVolume:={}
+		this.cachedVolume:={}
 		Gui VolumeIndicator:Destroy
 		
 	}
