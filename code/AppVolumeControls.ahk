@@ -148,7 +148,7 @@ Class AppVolumeControls
 		}
 		Else
 		{
-			msg = %processName% %volume%
+			msg:= processName " " volume "        "
 		}
 
 		
