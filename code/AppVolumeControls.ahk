@@ -3,9 +3,13 @@
 ;using windows messages lets us avoid hotkeys while keeping this script persistent so it only creates one Gui.
 ;a second script can take command line arguments to send commands to this script.
 OnMessage(0x5555, "MsgMonitor",20)
-
+global debugMode:=false
 MsgMonitor(wParam, lParam, msg)
 {
+	If (debugMode) 
+	{
+		OutputDebug, message received: %wParam% %lParam%
+	}
 	If(wParam = 1)
 	{
 		ChangeActiveAppVolume(lParam)		
@@ -20,8 +24,6 @@ MsgMonitor(wParam, lParam, msg)
 	}
 }
 
-;
-
 ChangeActiveAppVolume(change, startingVolume:="")
 {
 	WinGet, process_name, ProcessName, A
@@ -31,7 +33,23 @@ ChangeActiveAppVolume(change, startingVolume:="")
 		startingVolume:=GetAppPercentVolume(process_name)
 	}
 	
-	RunWait svcl.exe /ChangeVolume "%process_name%" %change%,, hide
+	If(ProcessInCache(process_name))
+	{
+		If (debugMode) 
+		{
+			OutputDebug, ChangeActiveAppVolume cached
+		}
+		Run svcl.exe /ChangeVolume "%process_name%" %change%,, hide
+		cachedVolume["value"]:=Min(Max(startingVolume + change, 0),100)
+	}
+	Else
+	{
+		If (debugMode) 
+		{ 
+			OutputDebug, ChangeActiveAppVolume uncached
+		}
+		RunWait svcl.exe /ChangeVolume "%process_name%" %change%,, hide
+	}
 	ShowAppVolume(process_name,(startingVolume + change > 0))
 }
 
@@ -73,15 +91,36 @@ ChangeActiveAppVolumeRelative(dir)
 SetActiveAppVolume(newVal)
 {
 	WinGet, process_name, ProcessName, A
-	RunWait svcl.exe /SetVolume "%process_name%" %newVal%,, hide
-	ShowAppVolume(process_name, ((newVal > 0) ? true : false) )
+	If(ProcessInCache(process_name))
+	{
+		Run svcl.exe /SetVolume "%process_name%" %newVal%,, hide
+	}
+	Else
+	{
+		RunWait svcl.exe /SetVolume "%process_name%" %newVal%,, hide
+	}
+	ShowAppVolume(process_name, ((newVal > 0) ? true : false))
+}
+global cachedVolume:= {process: "", value: 0}
+
+ProcessInCache(processName)
+{		
+	return ((processName = cachedVolume["process"]) && (cachedVolume["value"] > 0))
 }
 
 GetAppPercentVolume(processName)
 {
+	
+	If(ProcessInCache(processName))
+	{
+		return cachedVolume["value"]
+	}
+	
 	RunWait svcl.exe /GetPercent %processName%,, hide
 	vol:= errorlevel // 10
-
+	cachedVolume["process"]:=processName 
+	cachedVolume["value"]:=vol
+	
 	return vol
 }
 
@@ -99,11 +138,12 @@ ShowAppVolume(processName, notExpectingZero:=false)
 	width:=AddIniSetting("Overlay","progressBarWidth",400,"width of the progress bar in pixels")
 
 	volume:= GetAppPercentVolume(processName)
-	
 	msg:=""
 	If(notExpectingZero & (volume = 0))
 	{
 		msg = Volume for %processName% not found.
+		cachedVolume:={}
+		
 	}
 	Else
 	{
@@ -150,6 +190,7 @@ RemoveOverlay()
 {
 	OverlayShowing:=false
 	SetTimer, RemoveOverlay, Off
+	cachedVolume:={}
 	OverlayLabel:=false
     Gui VolumeIndicator:Destroy
 	
